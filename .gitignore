@@ -1,0 +1,9 @@
+# Uploaded report photos (user data, not source code)
+/public/uploads/reports/*
+!/public/uploads/reports/.gitkeep
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
