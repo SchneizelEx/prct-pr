@@ -15,6 +15,15 @@ body {
     padding: 0.75rem;
 }
 
+/* modal-body ไม่ยอมหดตาม flex-shrink แม้ตั้ง overflow-y:auto ไว้แล้ว (min-height:0 ก็ไม่ช่วย)
+   ทำให้เมื่อฟอร์มมีเนื้อหาเยอะ (เช่นมีผลค้นหาโรงเรียน) ความสูงรวมเกินจอ ปุ่มใน modal-footer
+   เลยหลุดพ้นจอไปโดยเฉพาะมือถือ — บังคับ max-height ตรง ๆ เทียบกับความสูงจอแทน ให้ modal-body
+   สกอลล์ภายในตัวเองแทนที่จะดันทั้งโมดัลให้สูงเกิน */
+.modal-dialog-scrollable .modal-body {
+    max-height: calc(100vh - 12rem);
+    overflow-y: auto;
+}
+
 .report-photo-thumb {
     width: 100%;
     max-width: 220px;

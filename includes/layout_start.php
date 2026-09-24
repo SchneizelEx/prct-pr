@@ -18,7 +18,7 @@ function nav_active(string $page, string $current): string
 <title><?= isset($pageTitle) ? h($pageTitle) . ' - ' : '' ?>ระบบติดตามการออกประชาสัมพันธ์รับนักเรียนใหม่</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<link href="assets/style.css" rel="stylesheet">
+<link href="assets/style.css?v=<?= filemtime(__DIR__ . '/../public/assets/style.css') ?>" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
