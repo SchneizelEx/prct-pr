@@ -20,6 +20,7 @@ CREATE TABLE staff (
 -- โรงเรียนเป้าหมาย
 CREATE TABLE schools (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    school_code VARCHAR(20) UNIQUE COMMENT 'รหัสสถานศึกษาของกระทรวงศึกษาธิการ',
     name VARCHAR(200) NOT NULL,
     district VARCHAR(100),
     province VARCHAR(100),

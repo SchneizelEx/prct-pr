@@ -12,13 +12,13 @@ if (mb_strlen($q) < 2) {
 }
 
 $stmt = get_pdo()->prepare('
-    SELECT id, name, district, province
+    SELECT id, school_code, name, district, province
     FROM schools
-    WHERE is_active = 1 AND (name LIKE ? OR district LIKE ? OR province LIKE ?)
+    WHERE is_active = 1 AND (name LIKE ? OR district LIKE ? OR province LIKE ? OR school_code LIKE ?)
     ORDER BY name ASC
     LIMIT 20
 ');
 $like = '%' . $q . '%';
-$stmt->execute([$like, $like, $like]);
+$stmt->execute([$like, $like, $like, $like]);
 
 echo json_encode($stmt->fetchAll(), JSON_UNESCAPED_UNICODE);

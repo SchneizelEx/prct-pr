@@ -54,7 +54,7 @@ function initSchoolPicker(root) {
               const item = document.createElement('button');
               item.type = 'button';
               item.className = 'list-group-item list-group-item-action';
-              const loc = [s.district, s.province].filter(Boolean).join(' ');
+              const loc = [s.school_code, s.district, s.province].filter(Boolean).join(' · ');
               item.innerHTML = '<strong></strong> <span class="text-muted small"></span>';
               item.querySelector('strong').textContent = s.name;
               item.querySelector('span').textContent = loc ? '(' + loc + ')' : '';
