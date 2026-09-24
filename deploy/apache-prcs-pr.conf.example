@@ -1,0 +1,28 @@
+# ตัวอย่างการตั้งค่าให้ระบบวิ่งที่ https://www.prcs.ac.th/pr
+#
+# นี่ไม่ใช่ VirtualHost ใหม่ แต่เป็นส่วนที่ "แทรกเพิ่ม" เข้าไปใน VirtualHost เดิม
+# ของ www.prcs.ac.th (มักอยู่ที่ /etc/apache2/sites-available/www.prcs.ac.th-le-ssl.conf
+# หรือชื่อคล้ายกัน — ใช้ `apachectl -S` เพื่อดูว่า config ไฟล์ไหนกำลังเสิร์ฟโดเมนนี้อยู่)
+#
+# ห้ามสร้าง <VirtualHost *:443> ใหม่แยกต่างหากสำหรับ www.prcs.ac.th เพราะ Apache
+# จะงงว่าจะใช้ vhost ไหนเสิร์ฟโดเมนเดียวกันบนพอร์ตเดียวกัน — ต้องแก้ไข block เดิมเท่านั้น
+
+# --- วางส่วนนี้ไว้ข้างใน <VirtualHost *:443> ของ www.prcs.ac.th ---
+
+    Alias /pr /var/www/prct-pr/public
+
+    <Directory /var/www/prct-pr/public>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+        DirectoryIndex index.php
+    </Directory>
+
+    # เผื่อกรณีใช้ php-fpm ผ่าน mod_proxy_fcgi (Ubuntu/Debian ที่ใช้ php-fpm)
+    # ตรวจสอบว่ามี block ลักษณะนี้อยู่แล้วในระดับ vhost หรือ conf กลาง — ถ้ายังไม่มีให้เพิ่ม
+    # (ปรับ php8.3-fpm.sock ตามเวอร์ชัน PHP จริงบนเซิร์ฟเวอร์)
+    #<FilesMatch \.php$>
+    #    SetHandler "proxy:unix:/run/php/php8.3-fpm.sock|fcgi://localhost"
+    #</FilesMatch>
+
+# --- จบส่วนที่ต้องแทรก ---

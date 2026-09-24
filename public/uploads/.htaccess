@@ -1,4 +1,13 @@
-php_flag engine off
+# ปิดการรันสคริปต์ในโฟลเดอร์นี้ (โฟลเดอร์รับไฟล์อัพโหลด)
+# ใช้ FilesMatch เป็นหลักเพราะทำงานได้ทั้งกรณี mod_php และ php-fpm (mod_proxy_fcgi)
+# ส่วน php_flag ใช้ได้เฉพาะ mod_php เท่านั้น จึงครอบด้วย IfModule กันเซิร์ฟเวอร์ที่ใช้ php-fpm error 500
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
 <FilesMatch "\.(php|phtml|php\d?)$">
     Require all denied
 </FilesMatch>
