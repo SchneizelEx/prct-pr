@@ -49,12 +49,27 @@ php database/create_admin.php admin "รหัสผ่านที่ตั้�
 
 ในหน้า **โรงเรียน** และตอน **ตั้งสายใหม่** จึงเปลี่ยนจากรายการ checkbox (ซึ่งใช้ไม่ได้จริงกับข้อมูลระดับหมื่นแถว) เป็นช่องค้นหาแบบพิมพ์แล้วเลือก (พิมพ์อย่างน้อย 2 ตัวอักษร) — ดูโค้ดที่ `public/school_search.php` (API ค้นหา) และ `public/assets/school-picker.js` (วิดเจ็ต)
 
-สคริปต์นำเข้า/ซ่อมข้อมูล (ใช้ครั้งเดียวตอนติดตั้ง หรือรันซ้ำได้ถ้าต้องการรีเฟรช):
+### วิธีนำเข้า (แนะนำ — ใช้บนเซิร์ฟเวอร์จริงได้เลย ไม่ต้องต่อเน็ตหาแหล่งข้อมูลภายนอก)
+
+ข้อมูลที่ import มาแล้วทั้ง 33,685 แห่งถูก dump ไว้เป็นไฟล์ SQL สำเร็จรูปที่ [database/seed/schools_seed.sql](database/seed/schools_seed.sql) — โหลดเข้าตาราง `schools` ตรง ๆ ได้เลย:
+
+```bash
+mysql -u <user> -p prct_pr < database/seed/schools_seed.sql
+```
+
+**สำคัญ:** รันคำสั่งนี้ตอนตาราง `schools` ยังว่างอยู่ (ต่อจาก `schema.sql` ทันที ก่อนเพิ่มโรงเรียนเองผ่านหน้าเว็บ) เพราะไฟล์นี้ระบุ `id` ของแต่ละแถวไว้ตรง ๆ ถ้ามีข้อมูลอื่นชน id เดิมอยู่ก่อนจะ import ไม่ผ่าน
+
+### วิธีนำเข้าแบบดึงข้อมูลสดจากแหล่งเดิม (ทางเลือก — ต้องต่อเน็ตได้และใช้เวลานานกว่า)
+
+ใช้กรณีต้องการรีเฟรชข้อมูลใหม่ทั้งหมด (เช่นพิกัด OSM มีการอัพเดท) แทนที่จะใช้ seed file ด้านบน — เซิร์ฟเวอร์ต้องเรียก `overpass-api.de` และ `data.go.th` ได้:
+
 ```bash
 php database/import_osm_schools.php <path-to-osm-overpass.json>
 php database/import_moe_schools.php <path-to-thailand_school.csv>
 php database/fix_district_extraction.php
 ```
+
+ไฟล์ `osm-overpass.json` และ `thailand_school.csv` ต้องดาวน์โหลดมาก่อน (ดูวิธี query Overpass API และลิงก์ดาวน์โหลด CSV ที่ data.go.th/dataset/thailand-school ในซอร์สโค้ดของสคริปต์ทั้งสองไฟล์)
 
 ## การติดตั้ง
 
@@ -64,7 +79,13 @@ php database/fix_district_extraction.php
    mysql -u root -p < database/schema.sql
    ```
 
-2. ตั้งค่าการเชื่อมต่อฐานข้อมูล — แก้ไข [config/database.php](config/database.php) โดยตรง หรือกำหนด environment variable ก่อนรัน:
+2. นำเข้าฐานข้อมูลโรงเรียน (33,685 แห่งพร้อมใช้ ไม่ต้องต่อเน็ต — ดูรายละเอียดที่หัวข้อ "ฐานข้อมูลโรงเรียน" ด้านล่าง):
+
+   ```bash
+   mysql -u root -p prct_pr < database/seed/schools_seed.sql
+   ```
+
+3. ตั้งค่าการเชื่อมต่อฐานข้อมูล — แก้ไข [config/database.php](config/database.php) โดยตรง หรือกำหนด environment variable ก่อนรัน:
 
    - `DB_HOST` (ค่าเริ่มต้น `127.0.0.1`)
    - `DB_PORT` (ค่าเริ่มต้น `3306`)
@@ -72,13 +93,13 @@ php database/fix_district_extraction.php
    - `DB_USER` (ค่าเริ่มต้น `root`)
    - `DB_PASS`
 
-3. สร้างบัญชีแอดมินคนแรก (จำเป็น — ไม่มีขั้นตอนนี้จะล็อกอินไม่ได้เลย ดูรายละเอียดที่หัวข้อ "สิทธิ์ผู้ใช้งาน" ด้านบน):
+4. สร้างบัญชีแอดมินคนแรก (จำเป็น — ไม่มีขั้นตอนนี้จะล็อกอินไม่ได้เลย ดูรายละเอียดที่หัวข้อ "สิทธิ์ผู้ใช้งาน" ด้านบน):
 
    ```bash
    php database/create_admin.php admin "รหัสผ่านที่ตั้งเอง"
    ```
 
-4. รันเซิร์ฟเวอร์สำหรับพัฒนา (document root คือโฟลเดอร์ `public/`):
+5. รันเซิร์ฟเวอร์สำหรับพัฒนา (document root คือโฟลเดอร์ `public/`):
 
    ```bash
    php -S localhost:8000 -t public
@@ -86,7 +107,7 @@ php database/fix_district_extraction.php
 
    เปิดเบราว์เซอร์ที่ `http://localhost:8000`
 
-5. สำหรับใช้งานจริงบน Apache/Nginx: ชี้ document root ไปที่ `public/` เท่านั้น (ห้ามชี้ไปที่โฟลเดอร์โปรเจกต์ทั้งหมด เพราะ `config/`, `includes/`, `database/` ไม่ควรเข้าถึงได้จากเว็บ) และตรวจสอบว่า `public/uploads/` เขียนได้ (permission)
+6. สำหรับใช้งานจริงบน Apache/Nginx: ชี้ document root ไปที่ `public/` เท่านั้น (ห้ามชี้ไปที่โฟลเดอร์โปรเจกต์ทั้งหมด เพราะ `config/`, `includes/`, `database/` ไม่ควรเข้าถึงได้จากเว็บ) และตรวจสอบว่า `public/uploads/` เขียนได้ (permission)
 
 ## การนำขึ้นเซิร์ฟเวอร์จริง — ตัวอย่าง: รันที่ `https://www.prcs.ac.th/pr`
 
